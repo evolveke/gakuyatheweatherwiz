@@ -1,1 +1,1 @@
-worker: python gakuya_bot.py
+web: python gakuya_bot.py

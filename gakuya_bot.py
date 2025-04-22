@@ -8,6 +8,8 @@ import logging
 from dotenv import load_dotenv
 from datetime import datetime
 import pytz
+from flask import Flask
+import threading
 
 # Configure logging
 logging.basicConfig(
@@ -19,6 +21,9 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Initialize Flask app
+app = Flask(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -69,7 +74,7 @@ except Exception as e:
     logger.error(f"Failed to fetch user ID: {e}")
     raise
 
-# Nairobi coordinates (can be changed to another Kenyan city)
+# Nairobi coordinates
 CITY = "Nairobi"
 LAT = -1.2833
 LON = 36.8167
@@ -89,7 +94,7 @@ def get_weather():
         logger.error(f"Failed to fetch weather data: {e}")
         return None, None
 
-# Function to generate weather post with banter
+# Function to generate weather post
 def generate_weather_post(temp, description):
     prompt = f"""
     You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. Create a short X post (150 characters or less) about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use witty Kenyan banter, local slang, and humor. Keep it short, punchy, and chaotic. Avoid nonsense phrases.
@@ -193,7 +198,7 @@ def check_and_reply(last_tweet_id):
     except Exception as e:
         logger.error(f"Error fetching mentions: {e}")
 
-# Main function to run bot
+# Function to run the bot's scheduling logic
 def run_bot():
     logger.info("Starting Gakuya bot")
     last_tweet_id = None
@@ -226,5 +231,16 @@ def run_bot():
             logger.error(f"Error in main loop: {e}")
             time.sleep(60)
 
+# Health endpoint for UptimeRobot to ping
+@app.route('/health')
+def health():
+    return "Gakuya is alive!", 200
+
+# Start the bot in a separate thread
 if __name__ == "__main__":
-    run_bot()
+    bot_thread = threading.Thread(target=run_bot)
+    bot_thread.daemon = True
+    bot_thread.start()
+    # Start Flask server
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
