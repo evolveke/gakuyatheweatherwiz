@@ -60,6 +60,15 @@ except Exception as e:
     logger.error(f"Failed to initialize Tweepy client: {e}")
     raise
 
+# Fetch the user ID for the authenticated account
+try:
+    user = client.get_me()
+    GAKUYA_USER_ID = user.data.id
+    logger.info(f"Authenticated as user ID: {GAKUYA_USER_ID}")
+except Exception as e:
+    logger.error(f"Failed to fetch user ID: {e}")
+    raise
+
 # Nairobi coordinates (can be changed to another Kenyan city)
 CITY = "Nairobi"
 LAT = -1.2833
@@ -83,13 +92,13 @@ def get_weather():
 # Function to generate weather post with banter
 def generate_weather_post(temp, description):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. Create a short X post (200 characters or less) about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use witty Kenyan banter, local slang, and humor. Keep it short, punchy, and chaotic. Avoid nonsense phrases.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. Create a short X post (150 characters or less) about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use witty Kenyan banter, local slang, and humor. Keep it short, punchy, and chaotic. Avoid nonsense phrases.
     """
     try:
         response = co.generate(
             model='command',
             prompt=prompt,
-            max_tokens=50,  # Reduced to ensure shorter output
+            max_tokens=40,
             temperature=1.0,
             k=0,
             stop_sequences=[],
@@ -98,7 +107,6 @@ def generate_weather_post(temp, description):
         post = response.generations[0].text.strip()
         logger.info(f"Generated post length: {len(post)} characters")
         if len(post) > 280:
-            # Find the last space before 277 characters to avoid cutting mid-word
             last_space = post[:277].rfind(' ')
             if last_space == -1:
                 last_space = 277
@@ -112,13 +120,13 @@ def generate_weather_post(temp, description):
 # Function to generate reply to comments
 def generate_reply(comment):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (200 characters or less) using Kenyan banter. Keep it humorous, chaotic, and relevant.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (150 characters or less) using Kenyan banter. Keep it humorous, chaotic, and relevant.
     """
     try:
         response = co.generate(
             model='command',
             prompt=prompt,
-            max_tokens=50,  # Reduced to ensure shorter output
+            max_tokens=40,
             temperature=1.0,
             k=0,
             stop_sequences=[],
@@ -155,30 +163,33 @@ def post_weather_update():
         logger.error(f"Error posting tweet: {e}")
         return None
 
-# Function to check and reply to comments
+# Function to check and reply to comments using v2 API
 def check_and_reply(last_tweet_id):
     if not last_tweet_id:
         logger.warning("No tweet ID provided, skipping reply check")
         return
     try:
-        mentions = api.mentions_timeline(since_id=last_tweet_id)
-        if not mentions:
+        mentions = client.get_users_mentions(id=GAKUYA_USER_ID, since_id=last_tweet_id, expansions=['author_id'])
+        if not mentions.data:
             logger.info("No new mentions found")
-        for mention in mentions:
+            return
+        for mention in mentions.data:
             comment = mention.text
-            user = mention.user.screen_name
+            user_id = mention.author_id
+            user = client.get_user(id=user_id)
+            username = user.data.username
             reply = generate_reply(comment)
             if reply is None:
-                logger.error(f"Skipping reply to @{user} due to reply generation failure")
+                logger.error(f"Skipping reply to @{username} due to reply generation failure")
                 continue
             try:
                 client.create_tweet(
-                    text=f"@{user} {reply}",
+                    text=f"@{username} {reply}",
                     in_reply_to_tweet_id=mention.id
                 )
-                logger.info(f"Replied to @{user}: {reply}")
+                logger.info(f"Replied to @{username}: {reply}")
             except Exception as e:
-                logger.error(f"Error replying to @{user}: {e}")
+                logger.error(f"Error replying to @{username}: {e}")
     except Exception as e:
         logger.error(f"Error fetching mentions: {e}")
 
@@ -191,13 +202,12 @@ def run_bot():
         last_tweet_id = post_weather_update()
         check_and_reply(last_tweet_id)
 
-    # Schedule daily post at 7 AM Nairobi time
-    nairobi_tz = pytz.timezone('Africa/Nairobi')
+    # Schedule weather post every 6 hours
     try:
-        schedule.every().day.at("09:00", nairobi_tz).do(job)
-        logger.info("Daily weather post scheduled at 09:00 Nairobi time")
+        schedule.every(6).hours.do(job)
+        logger.info("Weather post scheduled every 6 hours")
     except Exception as e:
-        logger.error(f"Failed to schedule daily post: {e}")
+        logger.error(f"Failed to schedule weather post: {e}")
         raise
 
     # Check for replies every 10 minutes

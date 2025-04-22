@@ -42,3 +42,9 @@ Your client app is not configured with the appropriate oauth1 app permissions fo
 2025-04-22 19:35:38,232 - INFO - Posted to X: Oh no! As we speak, Nairobi is currently under detention without dockets. The sun is having a bath and the rain is having a ball game. Don't let this 21.93°C wet your spirit, my fellow Nairobi comrades. Remember (Tweet ID: 1914719762220716362)
 2025-04-22 19:35:38,742 - ERROR - Error fetching mentions: 403 Forbidden
 453 - You currently have access to a subset of X API V2 endpoints and limited v1.1 endpoints (e.g. media post, oauth) only. If you need access to this endpoint, you may need a different access level. You can learn more here: https://developer.x.com/en/portal/product
+2025-04-22 23:39:46,093 - INFO - Cohere client initialized successfully
+2025-04-22 23:39:46,095 - INFO - Tweepy client initialized successfully
+2025-04-22 23:39:46,656 - INFO - Authenticated as user ID: 1914693515608522752
+2025-04-22 23:39:46,657 - INFO - Starting Gakuya bot
+2025-04-22 23:39:46,657 - INFO - Weather post scheduled every 6 hours
+2025-04-22 23:39:46,657 - INFO - Reply check scheduled every 10 minutes
