@@ -1,0 +1,1 @@
+worker: python gakuya_bot.py

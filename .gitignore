@@ -1,3 +1,4 @@
 .env
-
 gakuya.log
+__pycache__/
+*.pyc
