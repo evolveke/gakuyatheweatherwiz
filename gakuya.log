@@ -1,0 +1,44 @@
+2025-04-22 18:55:55,643 - INFO - Cohere client initialized successfully
+2025-04-22 18:55:55,645 - INFO - Tweepy client initialized successfully
+2025-04-22 18:55:55,645 - INFO - Starting Gakuya bot
+2025-04-22 18:55:55,754 - INFO - Daily weather post scheduled at 07:00 Nairobi time
+2025-04-22 18:55:55,754 - INFO - Reply check scheduled every 10 minutes
+2025-04-22 19:04:04,487 - INFO - Cohere client initialized successfully
+2025-04-22 19:04:04,496 - INFO - Tweepy client initialized successfully
+2025-04-22 19:04:04,497 - INFO - Starting Gakuya bot
+2025-04-22 19:04:04,615 - INFO - Daily weather post scheduled at 07:00 Nairobi time
+2025-04-22 19:04:04,615 - INFO - Reply check scheduled every 10 minutes
+2025-04-22 19:10:04,838 - INFO - Cohere client initialized successfully
+2025-04-22 19:10:04,840 - INFO - Tweepy client initialized successfully
+2025-04-22 19:10:04,841 - INFO - Starting Gakuya bot
+2025-04-22 19:10:04,968 - INFO - Daily weather post scheduled at 19:15 Nairobi time
+2025-04-22 19:10:04,969 - INFO - Reply check scheduled every 10 minutes
+2025-04-22 19:15:05,372 - INFO - Weather fetched for Nairobi: 20.62°C, light rain
+2025-04-22 19:15:10,554 - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-04-22 19:15:10,589 - INFO - Weather post generated: Gotianaga, Nairobi si uchawi, mid-morning na si mbegu ya kinyovi (cloudy), ng'ombe yangu si tumewa na thao (my cow is scared of the weather), hata dunia moja siku mbele ya umlungu wa mimba sai visuba (the previous day of the week of the rains was seen), na hii si mwaka moja ki...
+2025-04-22 19:15:11,101 - ERROR - Error posting tweet: 403 Forbidden
+Your client app is not configured with the appropriate oauth1 app permissions for this endpoint.
+2025-04-22 19:15:11,102 - WARNING - No tweet ID provided, skipping reply check
+2025-04-22 19:20:11,126 - WARNING - No tweet ID provided, skipping reply check
+2025-04-22 19:26:56,067 - INFO - Cohere client initialized successfully
+2025-04-22 19:26:56,069 - INFO - Tweepy client initialized successfully
+2025-04-22 19:26:56,069 - INFO - Starting Gakuya bot
+2025-04-22 19:26:56,238 - INFO - Daily weather post scheduled at 19:28 Nairobi time
+2025-04-22 19:26:56,239 - INFO - Reply check scheduled every 10 minutes
+2025-04-22 19:28:56,539 - INFO - Weather fetched for Nairobi: 20.62°C, light rain
+2025-04-22 19:29:00,106 - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-04-22 19:29:00,111 - INFO - Weather post generated: Would you believe it, there's a "mcheza" going on upstairs, and all the neighbors are getting wet! Oh, but it's just a little drizzle, nothing to moan about, it's just a bit of "pole pole" for the crops and our cisterns. If you're wondering what the temperature is, well my fri...
+2025-04-22 19:29:01,245 - INFO - Posted to X: Would you believe it, there's a "mcheza" going on upstairs, and all the neighbors are getting wet! Oh, but it's just a little drizzle, nothing to moan about, it's just a bit of "pole pole" for the crops and our cisterns. If you're wondering what the temperature is, well my fri... (Tweet ID: 1914718097342173537)
+2025-04-22 19:29:01,714 - ERROR - Error fetching mentions: 403 Forbidden
+453 - You currently have access to a subset of X API V2 endpoints and limited v1.1 endpoints (e.g. media post, oauth) only. If you need access to this endpoint, you may need a different access level. You can learn more here: https://developer.x.com/en/portal/product
+2025-04-22 19:34:28,894 - INFO - Cohere client initialized successfully
+2025-04-22 19:34:28,904 - INFO - Tweepy client initialized successfully
+2025-04-22 19:34:28,904 - INFO - Starting Gakuya bot
+2025-04-22 19:34:29,064 - INFO - Daily weather post scheduled at 19:35 Nairobi time
+2025-04-22 19:34:29,065 - INFO - Reply check scheduled every 10 minutes
+2025-04-22 19:35:29,395 - INFO - Weather fetched for Nairobi: 21.93°C, light rain
+2025-04-22 19:35:37,557 - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-04-22 19:35:37,571 - INFO - Generated post length: 211 characters
+2025-04-22 19:35:38,232 - INFO - Posted to X: Oh no! As we speak, Nairobi is currently under detention without dockets. The sun is having a bath and the rain is having a ball game. Don't let this 21.93°C wet your spirit, my fellow Nairobi comrades. Remember (Tweet ID: 1914719762220716362)
+2025-04-22 19:35:38,742 - ERROR - Error fetching mentions: 403 Forbidden
+453 - You currently have access to a subset of X API V2 endpoints and limited v1.1 endpoints (e.g. media post, oauth) only. If you need access to this endpoint, you may need a different access level. You can learn more here: https://developer.x.com/en/portal/product
