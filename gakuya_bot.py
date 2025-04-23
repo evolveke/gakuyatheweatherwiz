@@ -205,6 +205,7 @@ def run_bot():
     def job():
         nonlocal last_tweet_id
         last_tweet_id = post_weather_update()
+        logger.info(f"Updated last_tweet_id to: {last_tweet_id}")
         check_and_reply(last_tweet_id)
 
     # Schedule weather post every 6 hours
@@ -242,5 +243,5 @@ if __name__ == "__main__":
     bot_thread.daemon = True
     bot_thread.start()
     # Start Flask server
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
