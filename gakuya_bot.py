@@ -94,10 +94,10 @@ def get_weather():
         logger.error(f"Failed to fetch weather data: {e}")
         return None, None
 
-# Function to generate weather post
+# Function to generate weather post with more Sheng
 def generate_weather_post(temp, description):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. Create a short X post (150 characters or less) about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use witty Kenyan banter, local slang, and humor. Keep it short, punchy, and chaotic. Avoid nonsense phrases.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. Create a short X post (150 characters or less) about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use heavy Sheng slang (e.g., mtaa, poa, fika, ngori, stori, dem, jezi), Kenyan banter, and humor. Keep it short, punchy, and chaotic. Avoid nonsense phrases.
     """
     try:
         response = co.generate(
@@ -122,10 +122,10 @@ def generate_weather_post(temp, description):
         logger.error(f"Failed to generate weather post: {e}")
         return None
 
-# Function to generate reply to comments
+# Function to generate reply to comments with more Sheng
 def generate_reply(comment):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, intelligent, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (150 characters or less) using Kenyan banter. Keep it humorous, chaotic, and relevant.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (150 characters or less) using heavy Sheng slang (e.g., mtaa, poa, fika, ngori, stori, dem, jezi), Kenyan banter. Keep it humorous, chaotic, and relevant.
     """
     try:
         response = co.generate(
@@ -168,12 +168,32 @@ def post_weather_update():
         logger.error(f"Error posting tweet: {e}")
         return None
 
+# Function to fetch the latest tweet ID as a fallback
+def get_latest_tweet_id():
+    try:
+        logger.info("Attempting to fetch latest tweet ID")
+        tweets = client.get_users_tweets(id=GAKUYA_USER_ID, max_results=5)
+        if tweets.data:
+            latest_tweet_id = tweets.data[0].id
+            logger.info(f"Fetched latest tweet ID: {latest_tweet_id}")
+            return latest_tweet_id
+        else:
+            logger.warning("No tweets found for user")
+            return None
+    except Exception as e:
+        logger.error(f"Error fetching latest tweet: {e}")
+        return None
+
 # Function to check and reply to comments using v2 API
 def check_and_reply(last_tweet_id):
     if not last_tweet_id:
-        logger.warning("No tweet ID provided, skipping reply check")
-        return
+        logger.warning("No tweet ID provided, attempting to fetch latest tweet ID")
+        last_tweet_id = get_latest_tweet_id()
+        if not last_tweet_id:
+            logger.error("Failed to fetch latest tweet ID, skipping reply check")
+            return
     try:
+        logger.info(f"Checking mentions since tweet ID: {last_tweet_id}")
         mentions = client.get_users_mentions(id=GAKUYA_USER_ID, since_id=last_tweet_id, expansions=['author_id'])
         if not mentions.data:
             logger.info("No new mentions found")
