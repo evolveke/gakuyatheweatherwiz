@@ -1,7 +1,7 @@
-cohere==5.15.0
-tweepy==4.15.0
-requests==2.32.3
-schedule==1.2.2
-pytz==2025.2
-python-dotenv==1.1.0
-flask==3.0.3
+cohere>=5.0
+tweepy>=4.0
+requests>=2.0
+schedule>=1.0
+python-dotenv>=1.0
+pytz>=2024.1
+flask>=3.0

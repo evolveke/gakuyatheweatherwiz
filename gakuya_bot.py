@@ -94,10 +94,10 @@ def get_weather():
         logger.error(f"Failed to fetch weather data: {e}")
         return None, None
 
-# Function to generate weather post with more Sheng
+# Function to generate weather post in English with Kenyan banter
 def generate_weather_post(temp, description):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. Create a short X post (150 characters or less) about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use heavy Sheng slang (e.g., mtaa, poa, fika, ngori, stori, dem, jezi), Kenyan banter, and humor. Keep it short, punchy, and chaotic. Avoid nonsense phrases.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. Create a short X post (150 characters or less) in English about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use Kenyan banter with relatable references (e.g., matatus, tea, maandazi, or local vibes), and humor. Keep it short, punchy, and chaotic. Avoid Sheng slang.
     """
     try:
         response = co.generate(
@@ -122,10 +122,10 @@ def generate_weather_post(temp, description):
         logger.error(f"Failed to generate weather post: {e}")
         return None
 
-# Function to generate reply to comments with more Sheng
+# Function to generate reply to comments in English with Kenyan banter
 def generate_reply(comment):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (150 characters or less) using heavy Sheng slang (e.g., mtaa, poa, fika, ngori, stori, dem, jezi), Kenyan banter. Keep it humorous, chaotic, and relevant.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (150 characters or less) in English using Kenyan banter with relatable references (e.g., matatus, tea, maandazi, or local vibes). Keep it humorous, chaotic, and relevant. Avoid Sheng slang.
     """
     try:
         response = co.generate(
@@ -184,7 +184,7 @@ def get_latest_tweet_id():
         logger.error(f"Error fetching latest tweet: {e}")
         return None
 
-# Function to check and reply to comments using v2 API
+# Function to check and reply to comments using v1.1 API
 def check_and_reply(last_tweet_id):
     if not last_tweet_id:
         logger.warning("No tweet ID provided, attempting to fetch latest tweet ID")
@@ -194,15 +194,15 @@ def check_and_reply(last_tweet_id):
             return
     try:
         logger.info(f"Checking mentions since tweet ID: {last_tweet_id}")
-        mentions = client.get_users_mentions(id=GAKUYA_USER_ID, since_id=last_tweet_id, expansions=['author_id'])
-        if not mentions.data:
+        mentions = api.mentions_timeline(since_id=last_tweet_id)
+        if not mentions:
             logger.info("No new mentions found")
             return
-        for mention in mentions.data:
+        for mention in mentions:
             comment = mention.text
-            user_id = mention.author_id
-            user = client.get_user(id=user_id)
-            username = user.data.username
+            user_id = mention.user.id
+            username = mention.user.screen_name
+            mention_id = mention.id
             reply = generate_reply(comment)
             if reply is None:
                 logger.error(f"Skipping reply to @{username} due to reply generation failure")
@@ -210,7 +210,7 @@ def check_and_reply(last_tweet_id):
             try:
                 client.create_tweet(
                     text=f"@{username} {reply}",
-                    in_reply_to_tweet_id=mention.id
+                    in_reply_to_tweet_id=mention_id
                 )
                 logger.info(f"Replied to @{username}: {reply}")
             except Exception as e:
