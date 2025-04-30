@@ -2,3 +2,4 @@
 gakuya.log
 __pycache__/
 *.pyc
+last_tweet_id.json

@@ -59,3 +59,14 @@ Your client app is not configured with the appropriate oauth1 app permissions fo
  * Running on http://127.0.0.1:8080
  * Running on http://192.168.100.2:8080
 2025-04-26 18:45:19,117 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-30 18:49:04,952 - INFO - Cohere client initialized successfully
+2025-04-30 18:49:04,956 - INFO - Tweepy client initialized successfully
+2025-04-30 18:49:05,504 - INFO - Authenticated as user ID: 1914693515608522752
+2025-04-30 18:49:05,506 - INFO - Starting Gakuya bot
+2025-04-30 18:49:05,506 - INFO - Weather post scheduled every 6 hours
+2025-04-30 18:49:05,506 - INFO - Reply check scheduled every 10 minutes
+2025-04-30 18:49:08,311 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://192.168.100.2:8080
+2025-04-30 18:49:08,311 - INFO - [33mPress CTRL+C to quit[0m

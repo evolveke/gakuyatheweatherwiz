@@ -10,6 +10,7 @@ from datetime import datetime
 import pytz
 from flask import Flask
 import threading
+import json
 
 # Configure logging
 logging.basicConfig(
@@ -79,6 +80,30 @@ CITY = "Nairobi"
 LAT = -1.2833
 LON = 36.8167
 
+# File to store last tweet ID persistently
+LAST_TWEET_ID_FILE = "last_tweet_id.json"
+
+# Function to load last tweet ID from file
+def load_last_tweet_id():
+    try:
+        if os.path.exists(LAST_TWEET_ID_FILE):
+            with open(LAST_TWEET_ID_FILE, 'r') as f:
+                data = json.load(f)
+                return data.get('last_tweet_id')
+        return None
+    except Exception as e:
+        logger.error(f"Error loading last tweet ID: {e}")
+        return None
+
+# Function to save last tweet ID to file
+def save_last_tweet_id(tweet_id):
+    try:
+        with open(LAST_TWEET_ID_FILE, 'w') as f:
+            json.dump({'last_tweet_id': tweet_id}, f)
+        logger.info(f"Saved last_tweet_id to file: {tweet_id}")
+    except Exception as e:
+        logger.error(f"Error saving last tweet ID: {e}")
+
 # Function to get weather data
 def get_weather():
     url = f"http://api.openweathermap.org/data/2.5/weather?lat={LAT}&lon={LON}&appid={OPENWEATHER_API_KEY}&units=metric"
@@ -94,16 +119,16 @@ def get_weather():
         logger.error(f"Failed to fetch weather data: {e}")
         return None, None
 
-# Function to generate weather post in English with Kenyan banter
+# Function to generate weather post in English with Kenyan banter and hashtags
 def generate_weather_post(temp, description):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. Create a short X post (150 characters or less) in English about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use Kenyan banter with relatable references (e.g., matatus, tea, maandazi, or local vibes), and humor. Keep it short, punchy, and chaotic. Avoid Sheng slang.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. Create a short X post (130 characters or less) in English about today's weather in {CITY} (Temp: {temp}°C, Condition: {description}). Use Kenyan banter with relatable references (e.g., matatus, tea, maandazi, or local vibes), and humor. Add hashtags #NairobiWeather and #KenyanVibes. Keep it short, punchy, and chaotic. Avoid Sheng slang.
     """
     try:
         response = co.generate(
             model='command',
             prompt=prompt,
-            max_tokens=40,
+            max_tokens=60,
             temperature=1.0,
             k=0,
             stop_sequences=[],
@@ -122,16 +147,16 @@ def generate_weather_post(temp, description):
         logger.error(f"Failed to generate weather post: {e}")
         return None
 
-# Function to generate reply to comments in English with Kenyan banter
+# Function to generate reply to comments in English with Kenyan banter and hashtags
 def generate_reply(comment):
     prompt = f"""
-    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (150 characters or less) in English using Kenyan banter with relatable references (e.g., matatus, tea, maandazi, or local vibes). Keep it humorous, chaotic, and relevant. Avoid Sheng slang.
+    You are Gakuya, a Kenyan AI bot with a funny, sarcastic, and unhinged personality. A user commented on your X post: "{comment}". Respond with a short, witty reply (130 characters or less) in English using Kenyan banter with relatable references (e.g., matatus, tea, maandazi, or local vibes). Add hashtag #KenyanVibes. Keep it humorous, chaotic, and relevant. Avoid Sheng slang.
     """
     try:
         response = co.generate(
             model='command',
             prompt=prompt,
-            max_tokens=40,
+            max_tokens=60,
             temperature=1.0,
             k=0,
             stop_sequences=[],
@@ -163,6 +188,7 @@ def post_weather_update():
     try:
         tweet = client.create_tweet(text=post)
         logger.info(f"Posted to X: {post} (Tweet ID: {tweet.data['id']})")
+        save_last_tweet_id(tweet.data['id'])
         return tweet.data['id']
     except Exception as e:
         logger.error(f"Error posting tweet: {e}")
@@ -190,8 +216,11 @@ def check_and_reply(last_tweet_id):
         logger.warning("No tweet ID provided, attempting to fetch latest tweet ID")
         last_tweet_id = get_latest_tweet_id()
         if not last_tweet_id:
-            logger.error("Failed to fetch latest tweet ID, skipping reply check")
-            return
+            logger.warning("Failed to fetch latest tweet ID, attempting to load from file")
+            last_tweet_id = load_last_tweet_id()
+            if not last_tweet_id:
+                logger.error("Failed to fetch or load last tweet ID, skipping reply check")
+                return
     try:
         logger.info(f"Checking mentions since tweet ID: {last_tweet_id}")
         mentions = api.mentions_timeline(since_id=last_tweet_id)
@@ -221,7 +250,7 @@ def check_and_reply(last_tweet_id):
 # Function to run the bot's scheduling logic
 def run_bot():
     logger.info("Starting Gakuya bot")
-    last_tweet_id = None
+    last_tweet_id = load_last_tweet_id()
     def job():
         nonlocal last_tweet_id
         last_tweet_id = post_weather_update()
